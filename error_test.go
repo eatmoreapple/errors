@@ -12,3 +12,12 @@ func TestWarp(t *testing.T) {
 		t.Fatal("not equal")
 	}
 }
+
+func TestUniq(t *testing.T) {
+	var err1 = errors.New("error1")
+	var err2 = errors.New("error2")
+	var eg = ErrorGroup{err1, err2, err1, err2, err2}.Uniq()
+	if len(eg) != 2 {
+		t.Error("un uniqed")
+	}
+}

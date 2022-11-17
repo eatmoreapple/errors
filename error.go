@@ -42,3 +42,30 @@ func (eg ErrorGroup) Contains(target error) bool {
 	}
 	return false
 }
+
+func (eg ErrorGroup) Uniq() ErrorGroup {
+	if len(eg) == 0 {
+		return nil
+	}
+	if len(eg) == 1 {
+		return eg
+	}
+	var group ErrorGroup
+	for _, err := range eg {
+		var found bool
+		for _, err2 := range group {
+			if err == err2 {
+				found = true
+				break
+			}
+		}
+		if !found {
+			group = append(group, err)
+		}
+	}
+	return group
+}
+
+func (eg ErrorGroup) Len() int {
+	return len(eg)
+}
