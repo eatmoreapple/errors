@@ -1,6 +1,7 @@
 package errors
 
 import (
+	"errors"
 	"strings"
 )
 
@@ -26,4 +27,18 @@ func Contains(err error, msg string) bool {
 		return false
 	}
 	return strings.Contains(err.Error(), msg)
+}
+
+type ErrorGroup []error
+
+func (eg ErrorGroup) Contains(target error) bool {
+	if len(eg) == 0 {
+		return false
+	}
+	for _, err := range eg {
+		if errors.Is(err, target) {
+			return true
+		}
+	}
+	return false
 }
