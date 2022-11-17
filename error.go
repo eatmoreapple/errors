@@ -10,18 +10,22 @@ type wrapper struct {
 	msg string
 }
 
+// Error implements the error interface.
 func (w *wrapper) Error() string {
 	return w.msg
 }
 
+// Unwrap returns the wrapped error.
 func (w *wrapper) Unwrap() error {
 	return w.err
 }
 
+// Warp wraps the given error with the given message.
 func Warp(err error, msg string) error {
 	return &wrapper{err: err, msg: msg}
 }
 
+// Contains returns true if the error group contains the given error.
 func Contains(err error, msg string) bool {
 	if err == nil {
 		return false
@@ -29,8 +33,10 @@ func Contains(err error, msg string) bool {
 	return strings.Contains(err.Error(), msg)
 }
 
+// ErrorGroup defines a group of errors.
 type ErrorGroup []error
 
+// Contains returns true if the error group contains the given error.
 func (eg ErrorGroup) Contains(target error) bool {
 	if len(eg) == 0 {
 		return false
@@ -43,6 +49,7 @@ func (eg ErrorGroup) Contains(target error) bool {
 	return false
 }
 
+// Uniq returns a new ErrorGroup with unique errors.
 func (eg ErrorGroup) Uniq() ErrorGroup {
 	if len(eg) == 0 {
 		return nil
@@ -66,6 +73,19 @@ func (eg ErrorGroup) Uniq() ErrorGroup {
 	return group
 }
 
+// Len returns the number of errors in the group.
 func (eg ErrorGroup) Len() int {
 	return len(eg)
+}
+
+// WarpALL wraps all errors in the group with the given message.
+func (eg ErrorGroup) WarpALL(err error) ErrorGroup {
+	if len(eg) == 0 {
+		return nil
+	}
+	var group ErrorGroup
+	for _, err2 := range eg {
+		group = append(group, Warp(err2, err.Error()))
+	}
+	return group
 }
