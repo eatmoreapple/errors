@@ -89,3 +89,11 @@ func (eg ErrorGroup) WarpALL(err error) ErrorGroup {
 	}
 	return group
 }
+
+// Then returns the then error if error is target.
+func Then(err, target, then error) error {
+	if errors.Is(err, target) {
+		return then
+	}
+	return err
+}
